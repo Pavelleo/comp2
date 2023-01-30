@@ -26,6 +26,8 @@ public class ParkingLot {
 	 */
 	private int numSpotsPerRow;
 
+	private int spotsTaken;
+
 	/**
 	 * Instance variable (two-dimensional array) for storing the lot design
 	 */
@@ -50,7 +52,7 @@ public class ParkingLot {
 		}
 
 		// determine numRows and numSpotsPerRow; you can do so by
-		// writing your own code or alternatively completing the 
+		// writing your own code or alternatively completing the
 		// private calculateLotDimensions(...) that I have provided
 		calculateLotDimensions(strFilename);
 
@@ -58,7 +60,7 @@ public class ParkingLot {
 		// WRITE YOUR CODE HERE!
 
 		// populate lotDesign and occupancy; you can do so by
-		// writing your own code or alternatively completing the 
+		// writing your own code or alternatively completing the
 		// private populateFromFile(...) that I have provided
 		populateFromFile(strFilename);
 	}
@@ -108,7 +110,8 @@ public class ParkingLot {
 	 */
 	public int getTotalCapacity() {
 		// WRITE YOUR CODE HERE!
-		return -1; // REMOVE THIS STATEMENT AFTER IMPLEMENTING THIS METHOD
+
+		return (numRows * numSpotsPerRow) - spotsTaken; // REMOVE THIS STATEMENT AFTER IMPLEMENTING THIS METHOD
 
 	}
 
@@ -118,17 +121,41 @@ public class ParkingLot {
 	 */
 	public int getTotalOccupancy() {
 		// WRITE YOUR CODE HERE!
-		return -1; // REMOVE THIS STATEMENT AFTER IMPLEMENTING THIS METHOD		
+		// see the spot for each car and check if that car can be parked there
+		// only count the cars that are compatible with their given spot
+		return -1; // REMOVE THIS STATEMENT AFTER IMPLEMENTING THIS METHOD
 	}
 
 	private void calculateLotDimensions(String strFilename) throws Exception {
 
 		Scanner scanner = new Scanner(new File(strFilename));
+		int x = 0;
+		int y = 0;
+		int st = 0;
 
 		while (scanner.hasNext()) {
 			String str = scanner.nextLine();
-			// WRITE YOUR CODE HERE!
+			if (str.compareTo(SECTIONER) == 0)
+				break;
+
+			if (str.compareTo("") == 0)
+				y--;
+
+			for (int i = 0; i < str.length(); i++) {
+				if (!(str.charAt(i) == ' ' || str.charAt(i) == ',') && y == 0)
+					x++;
+
+				if (str.charAt(i) == 'N')
+					st++;
+			}
+
+			y++;
 		}
+
+		numRows = y;
+		numSpotsPerRow = x;
+		spotsTaken = st;
+		// System.out.println("rows: " + numRows + "\ncolumns: " + numSpotsPerRow);
 
 		scanner.close();
 	}
