@@ -1,6 +1,8 @@
 import java.io.File;
 import java.util.Scanner;
 
+import javax.swing.RowFilter;
+
 /**
  * @author Mehrdad Sabetzadeh, University of Ottawa
  */
@@ -26,7 +28,7 @@ public class ParkingLot {
 	 */
 	private int numSpotsPerRow;
 
-	private int spotsTaken;
+	private int spotsTaken = 0;
 
 	/**
 	 * Instance variable (two-dimensional array) for storing the lot design
@@ -58,6 +60,8 @@ public class ParkingLot {
 
 		// instantiate the lotDesign and occupancy variables!
 		// WRITE YOUR CODE HERE!
+		this.lotDesign = new CarType[numRows][numSpotsPerRow];
+		this.occupancy = new Car[numRows][numSpotsPerRow];
 
 		// populate lotDesign and occupancy; you can do so by
 		// writing your own code or alternatively completing the
@@ -123,7 +127,7 @@ public class ParkingLot {
 		// WRITE YOUR CODE HERE!
 		// see the spot for each car and check if that car can be parked there
 		// only count the cars that are compatible with their given spot
-		return -1; // REMOVE THIS STATEMENT AFTER IMPLEMENTING THIS METHOD
+		return spotsTaken; // REMOVE THIS STATEMENT AFTER IMPLEMENTING THIS METHOD
 	}
 
 	private void calculateLotDimensions(String strFilename) throws Exception {
@@ -131,7 +135,6 @@ public class ParkingLot {
 		Scanner scanner = new Scanner(new File(strFilename));
 		int x = 0;
 		int y = 0;
-		int st = 0;
 
 		while (scanner.hasNext()) {
 			String str = scanner.nextLine();
@@ -145,8 +148,6 @@ public class ParkingLot {
 				if (!(str.charAt(i) == ' ' || str.charAt(i) == ',') && y == 0)
 					x++;
 
-				if (str.charAt(i) == 'N')
-					st++;
 			}
 
 			y++;
@@ -154,7 +155,6 @@ public class ParkingLot {
 
 		numRows = y;
 		numSpotsPerRow = x;
-		spotsTaken = st;
 		// System.out.println("rows: " + numRows + "\ncolumns: " + numSpotsPerRow);
 
 		scanner.close();
@@ -167,15 +167,71 @@ public class ParkingLot {
 		// YOU MAY NEED TO DEFINE SOME LOCAL VARIABLES HERE!
 
 		// while loop for reading the lot design
+		// populate cartype
+		int x = 0;
 		while (scanner.hasNext()) {
 			String str = scanner.nextLine();
 			// WRITE YOUR CODE HERE!
+			str = str.replaceAll("[,;\\s]", "");
+			if (str == SECTIONER)
+				break;
+
+			for (int i = 0; i < numSpotsPerRow; i++) {
+				if (str.charAt(x) == 'E') {
+					lotDesign[x][i] = CarType.ELECTRIC;
+				} else if (str.charAt(x) == 'S') {
+					lotDesign[x][i] = CarType.SMALL;
+				} else if (str.charAt(x) == 'R') {
+					lotDesign[x][i] = CarType.REGULAR;
+				} else if (str.charAt(x) == 'L') {
+					lotDesign[x][i] = CarType.LARGE;
+				} else if (str.charAt(x) == 'N') {
+					lotDesign[x][i] = CarType.NA;
+				}
+			}
+
+			x++;
+			if (x == numRows - 1)
+				break;
 		}
 
 		// while loop for reading occupancy data
+		// populate car
 		while (scanner.hasNext()) {
 			String str = scanner.nextLine();
 			// WRITE YOUR CODE HERE!
+			str = str.replaceAll("[,;\\s]", "");
+			char first = ' ';
+			if (str.isEmpty()) {
+				first = str.charAt(0);
+			}
+			while (!Character.isDigit(first)) {
+				str = scanner.nextLine();
+			}
+
+			int row = str.charAt(0) - '0';
+			int spot = str.charAt(1) - '0';
+
+			CarType t = CarType.NA;
+			if (str.charAt(2) == 'E') {
+				t = CarType.ELECTRIC;
+			} else if (str.charAt(2) == 'S') {
+				t = CarType.SMALL;
+			} else if (str.charAt(2) == 'R') {
+				t = CarType.REGULAR;
+			} else if (str.charAt(2) == 'L') {
+				t = CarType.LARGE;
+			} else if (str.charAt(2) == 'N') {
+				t = CarType.NA;
+			}
+
+			String plate = "" + str.charAt(3) + str.charAt(3) + str.charAt(3);
+
+			Car newCar = new Car(t, plate);
+			if (lotDesign[row][spot].compareTo(newCar.getType()) == 0) {
+				occupancy[row][spot] = newCar;
+				spotsTaken++;
+			}
 		}
 
 		scanner.close();
