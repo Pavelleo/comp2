@@ -18,40 +18,32 @@ public class Utils {
         // in is array given
         // what is word to be replaced
         // with is the replacement
-
-        String[] out = null; // The new array to be returned
-        boolean valid = true; // True if the pre-conditions are satistified
-
-        // Testing pre-conditions
+        String[] empty = null;
 
         if (in == null || what == null || with == null) {
-            valid = false;
-        } else {
-            // more or less 16 lines missing
+            return empty;
         }
 
-        if (valid) {
-            out = new String[in.length];
-            for (int i = 0; i < in.length; i++) {
-                // loop through in and check for anything mathcing the first index of what,
-                // replace it with
-                // more or less 10 lines missing
-                out[i] = in[i];
-            }
-            for (int i = 0; i < what.length; i++) {
-                for (int j = 0; j < with.length; j++) {
-                    if (what[i].equals(out[j])) {
-                        out[j] = with[i];
+        if (in != null && what != null && with != null) {
+            if (with.length == what.length) {
+                String[] out = new String[in.length];
+
+                for (int i = 0; i < in.length; i++) {
+                    out[i] = in[i];
+                }
+
+                for (int i = 0; i < what.length; i++) {
+                    for (int j = 0; j < out.length; j++) {
+                        if (what[i].equals(out[j])) {
+                            out[j] = with[i];
+                        }
                     }
                 }
 
+                return out;
             }
         }
-        // Returning a reference to the newly created array that
-        // contains the same entries as 'in' except that all the
-        // occurrences of words from 'what' have been replaced by
-        // their corresponding occurrence from 'with'.
 
-        return out;
+        return null;
     }
 }
